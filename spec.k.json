@@ -1,0 +1,38 @@
+{
+  "type": "Spec",
+  "model_version": 1,
+  "version": 1,
+  "description": "Minimal spec for autopilot-selftest \u2014 exists to dogfood check_spec_constraints.py end-to-end against a real consumer repo. Keep it small; this is not where autopilot's own invariants live.",
+  "contains_unverified_constraints": false,
+  "features": {
+    "selftest_shape": {
+      "type": "Feature",
+      "model_version": 1,
+      "id": "selftest_shape",
+      "description": "The consumer caller workflow consumes autopilot via a cross-repo uses: ref, never a local path.",
+      "goals": [
+        "Preserve the physical boundary between implementation (autopilot) and consumer (autopilot-selftest) so the separation cannot be blurred by accident."
+      ],
+      "constraints": {
+        "agent_workflow_present": {
+          "id": "agent_workflow_present",
+          "cmd": "test -f $PROJECT_ROOT/.github/workflows/agent.yml",
+          "description": "Structural: .github/workflows/agent.yml must exist \u2014 this is the consumer entry point.",
+          "fails_count": 1
+        },
+        "no_local_uses_paths": {
+          "id": "no_local_uses_paths",
+          "cmd": "! grep -rE 'uses:[[:space:]]*\\./\\.github/workflows/' $PROJECT_ROOT/.github/workflows/",
+          "description": "Negative: no workflow in this repo may reference autopilot via a local `./` path. Only cross-repo `<owner>/autopilot/...@<ref>` is permitted. Enforces the physical boundary between consumer and implementation.",
+          "fails_count": 1
+        },
+        "uses_marketplace_workflow": {
+          "id": "uses_marketplace_workflow",
+          "cmd": "for f in $PROJECT_ROOT/.github/workflows/*.yml; do grep -qE 'uses:[[:space:]]*Clockwork-Pilot/autopilot/\\.github/workflows/[a-z0-9_-]+\\.yml@' \"$f\" || { echo \"$f does not reference a Clockwork-Pilot/autopilot marketplace workflow via uses:\"; exit 1; }; done",
+          "description": "Positive: every workflow file in this repo must contain at least one `uses: Clockwork-Pilot/autopilot/.github/workflows/<name>.yml@<ref>` line. Proves autopilot-selftest is actively consuming the marketplace surface, not just structurally avoiding local paths.",
+          "fails_count": 1
+        }
+      }
+    }
+  }
+}

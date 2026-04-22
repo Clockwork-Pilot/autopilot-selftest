@@ -1,0 +1,14 @@
+name: Check Constraints
+
+# Consumer caller: owns the push / pull_request events and delegates to
+# the library workflow. The library checks out this repo's $GITHUB_WORKSPACE
+# and runs check_spec_constraints.py against this repo's spec.k.json.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  delegate:
+    uses: Clockwork-Pilot/autopilot/.github/workflows/check-constraints.yml@main

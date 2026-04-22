@@ -1,0 +1,25 @@
+name: Issue Trigger
+
+# Consumer caller: owns the `issues` event and passes the event payload
+# through to the library workflow. See autopilot-selftest/.github/workflows/
+# agent.yml for the companion workflow_dispatch caller.
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  actions: write
+  issues: write
+
+jobs:
+  delegate:
+    uses: Clockwork-Pilot/autopilot/.github/workflows/issue-trigger.yml@main
+    with:
+      action: ${{ github.event.action }}
+      label_name: ${{ github.event.label.name || '' }}
+      issue_number: ${{ github.event.issue.number }}
+      sender_login: ${{ github.event.sender.login }}
+      default_branch: ${{ github.event.repository.default_branch }}
+      target_workflow: agent.yml
+    secrets:
+      RUNNERS_PAT: ${{ secrets.RUNNERS_PAT }}

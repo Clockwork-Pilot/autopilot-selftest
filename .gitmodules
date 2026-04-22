@@ -1,0 +1,3 @@
+[submodule "autopilot"]
+	path = autopilot
+	url = git@github.com:Clockwork-Pilot/autopilot.git

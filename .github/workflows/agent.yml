@@ -1,0 +1,46 @@
+name: Agent
+
+# Consumer caller workflow: demonstrates the shape a real downstream fork
+# ends up with after adopting autopilot from the Marketplace. Consumes
+# coding-agent.yml as a reusable workflow via a cross-repo `uses:` ref —
+# never a local `./` path. The repo boundary is what enforces this: a
+# `./` reference simply cannot resolve across repos, so the separation
+# between implementation (autopilot) and consumer (autopilot-selftest) is
+# mechanical, not conventional.
+#
+# Manual trigger only — pick an existing issue number and the runner label
+# (your GitHub username) matching your self-hosted runner. Apply the normal
+# merge_into_upstream/timeout/model frontmatter on the issue as usual; this
+# file just hands off to coding-agent.yml.
+#
+# PR testing loop: when there is a PR open against autopilot, flip the
+# `@main` ref below to `@<pr-branch>` to run this repo's pinned test
+# issues against the in-flight implementation, then flip back to `@main`
+# on merge. This is the same one-line edit a downstream contributor makes
+# to smoke-test a version bump, so the flow is dogfooded by design.
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: GitHub username (matches self-hosted runner label)
+        required: true
+        type: string
+      issue_number:
+        description: Issue number to work on
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  run:
+    uses: Clockwork-Pilot/autopilot/.github/workflows/coding-agent.yml@main
+    with:
+      runner_label: ${{ inputs.runner_label }}
+      issue_number: ${{ inputs.issue_number }}
+    secrets:
+      UPSTREAM_PR_TOKEN: ${{ secrets.UPSTREAM_PR_TOKEN }}
