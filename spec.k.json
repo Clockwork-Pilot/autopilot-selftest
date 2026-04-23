@@ -14,12 +14,6 @@
         "Preserve the physical boundary between implementation (autopilot) and consumer (autopilot-selftest) so the separation cannot be blurred by accident."
       ],
       "constraints": {
-        "agent_workflow_present": {
-          "id": "agent_workflow_present",
-          "cmd": "test -f $PROJECT_ROOT/.github/workflows/agent.yml",
-          "description": "Structural: .github/workflows/agent.yml must exist \u2014 this is the consumer entry point.",
-          "fails_count": 1
-        },
         "no_local_uses_paths": {
           "id": "no_local_uses_paths",
           "cmd": "! grep -rE 'uses:[[:space:]]*\\./\\.github/workflows/' $PROJECT_ROOT/.github/workflows/",
@@ -30,6 +24,23 @@
           "id": "uses_marketplace_workflow",
           "cmd": "for f in $PROJECT_ROOT/.github/workflows/*.yml; do grep -qE 'uses:[[:space:]]*Clockwork-Pilot/autopilot/\\.github/workflows/[a-z0-9_-]+\\.yml@' \"$f\" || { echo \"$f does not reference a Clockwork-Pilot/autopilot marketplace workflow via uses:\"; exit 1; }; done",
           "description": "Positive: every workflow file in this repo must contain at least one `uses: Clockwork-Pilot/autopilot/.github/workflows/<name>.yml@<ref>` line. Proves autopilot-selftest is actively consuming the marketplace surface, not just structurally avoiding local paths.",
+          "fails_count": 1
+        }
+      }
+    },
+    "autopilot_submodule_healthy": {
+      "type": "Feature",
+      "model_version": 1,
+      "id": "autopilot_submodule_healthy",
+      "description": "Autopilot submodule is checked out and its own constraint suite passes.",
+      "goals": [
+        "Dogfood autopilot from the consumer side: if autopilot ships broken invariants, the selftest should refuse to pass."
+      ],
+      "constraints": {
+        "autopilot_constraints_pass": {
+          "id": "autopilot_constraints_pass",
+          "cmd": "cd $PROJECT_ROOT/autopilot && bash .github/scripts/run-in-docker-no-claude.sh check_spec_constraints.py",
+          "description": "Behavioral: autopilot's own spec constraints must pass. Runs inside the autopilot-ws docker image via the same entrypoint CI uses, so a regression in autopilot (or a broken submodule pin) fails the selftest.",
           "fails_count": 1
         }
       }

@@ -10,5 +10,5 @@ on:
   pull_request:
 
 jobs:
-  delegate:
+  check-constraints:
     uses: Clockwork-Pilot/autopilot/.github/workflows/check-constraints.yml@main
