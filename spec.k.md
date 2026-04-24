@@ -8,11 +8,22 @@ Minimal spec for autopilot-selftest — exists to dogfood check_spec_constraints
 
 - [Overview](#overview)
 - [Features](#features)
+    - [Feature: protected_files_no_host_paths](#feature-protected_files_no_host_paths)
+      - [no_home_prefixed_paths](#no_home_prefixed_paths)
     - [Feature: selftest_shape](#feature-selftest_shape)
       - [no_local_uses_paths](#no_local_uses_paths)
       - [uses_marketplace_autopilot](#uses_marketplace_autopilot)
 
 ## Features
+
+### Feature: protected_files_no_host_paths
+**Root .protected_files.txt must not contain host-specific paths starting with /home.**
+
+**Goals:**
+- Keep .protected_files.txt portable across machines by forbidding absolute /home/<user>/... entries that only make sense on one contributors workstation.
+
+#### no_home_prefixed_paths
+**Description:** Negative: .protected_files.txt at project root must contain no line starting with /home. Such paths are host-specific and leak one contributors absolute layout into the repo.
 
 ### Feature: selftest_shape
 **The consumer caller workflow consumes autopilot via a cross-repo uses: ref, never a local path.**

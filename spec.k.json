@@ -27,6 +27,23 @@
           "fails_count": 1
         }
       }
+    },
+    "protected_files_no_host_paths": {
+      "type": "Feature",
+      "model_version": 1,
+      "id": "protected_files_no_host_paths",
+      "description": "Root .protected_files.txt must not contain host-specific paths starting with /home.",
+      "goals": [
+        "Keep .protected_files.txt portable across machines by forbidding absolute /home/<user>/... entries that only make sense on one contributors workstation."
+      ],
+      "constraints": {
+        "no_home_prefixed_paths": {
+          "id": "no_home_prefixed_paths",
+          "cmd": "! grep -E \"^/home(/|$)\" $PROJECT_ROOT/.protected_files.txt",
+          "description": "Negative: .protected_files.txt at project root must contain no line starting with /home. Such paths are host-specific and leak one contributors absolute layout into the repo.",
+          "fails_count": 1
+        }
+      }
     }
   }
 }
