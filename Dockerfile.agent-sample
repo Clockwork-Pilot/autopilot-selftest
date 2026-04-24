@@ -8,7 +8,8 @@
 # check-constraints-with-dockerfile.yml pass this file to the
 # Clockwork-Pilot/autopilot build-agent-image action.
 
-FROM autopilot-ws-base:latest
+ARG BASE_IMAGE=ghcr.io/clockwork-pilot/autopilot-ws:latest
+FROM ${BASE_IMAGE}
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends jq \

@@ -35,7 +35,7 @@ jobs:
       base_image:       ghcr.io/clockwork-pilot/autopilot-ws:latest
       dockerfile:       Dockerfile.agent-sample
       tag:              autopilot-agent
-      cache_key_prefix: ${{ github.repository }}-agent-img
+      tag_prefix:       ${{ github.repository }}-agent-img
 
   run:
     needs: image

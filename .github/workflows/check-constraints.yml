@@ -21,10 +21,10 @@ jobs:
       - id: image
         uses: Clockwork-Pilot/autopilot/.github/actions/ensure-docker-image@main
         with:
-          dockerfile:       Dockerfile.agent-sample
           base_image:       ghcr.io/clockwork-pilot/autopilot-ws:latest
+          dockerfile:       Dockerfile.agent-sample
           tag:              autopilot-check
-          cache_key_prefix: ${{ github.repository }}-check-img
+          tag_prefix:       ${{ github.repository }}-check-img
       - uses: Clockwork-Pilot/autopilot/.github/actions/check-constraints@main
         with:
           image: ${{ steps.image.outputs.image }}
