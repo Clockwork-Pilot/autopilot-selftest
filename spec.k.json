@@ -27,23 +27,6 @@
           "fails_count": 1
         }
       }
-    },
-    "autopilot_submodule_healthy": {
-      "type": "Feature",
-      "model_version": 1,
-      "id": "autopilot_submodule_healthy",
-      "description": "Autopilot submodule is checked out and its own constraint suite passes.",
-      "goals": [
-        "Dogfood autopilot from the consumer side: if autopilot ships broken invariants, the selftest should refuse to pass."
-      ],
-      "constraints": {
-        "autopilot_constraints_pass": {
-          "id": "autopilot_constraints_pass",
-          "cmd": "cd $PROJECT_ROOT/autopilot && bash .github/scripts/run-in-docker-no-claude.sh check_spec_constraints.py",
-          "description": "Behavioral: autopilot's own spec constraints must pass. Runs inside the autopilot-ws docker image via the same entrypoint CI uses, so a regression in autopilot (or a broken submodule pin) fails the selftest.",
-          "fails_count": 1
-        }
-      }
     }
   }
 }

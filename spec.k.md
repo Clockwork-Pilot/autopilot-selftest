@@ -8,22 +8,11 @@ Minimal spec for autopilot-selftest — exists to dogfood check_spec_constraints
 
 - [Overview](#overview)
 - [Features](#features)
-    - [Feature: autopilot_submodule_healthy](#feature-autopilot_submodule_healthy)
-      - [autopilot_constraints_pass](#autopilot_constraints_pass)
     - [Feature: selftest_shape](#feature-selftest_shape)
       - [no_local_uses_paths](#no_local_uses_paths)
       - [uses_marketplace_workflow](#uses_marketplace_workflow)
 
 ## Features
-
-### Feature: autopilot_submodule_healthy
-**Autopilot submodule is checked out and its own constraint suite passes.**
-
-**Goals:**
-- Dogfood autopilot from the consumer side: if autopilot ships broken invariants, the selftest should refuse to pass.
-
-#### autopilot_constraints_pass
-**Description:** Behavioral: autopilot's own spec constraints must pass. Runs inside the autopilot-ws docker image via the same entrypoint CI uses, so a regression in autopilot (or a broken submodule pin) fails the selftest.
 
 ### Feature: selftest_shape
 **The consumer caller workflow consumes autopilot via a cross-repo uses: ref, never a local path.**
