@@ -20,10 +20,10 @@
           "description": "Negative: no workflow in this repo may reference autopilot via a local `./` path. Only cross-repo `<owner>/autopilot/...@<ref>` is permitted. Enforces the physical boundary between consumer and implementation.",
           "fails_count": 1
         },
-        "uses_marketplace_workflow": {
-          "id": "uses_marketplace_workflow",
-          "cmd": "for f in $PROJECT_ROOT/.github/workflows/*.yml; do grep -qE 'uses:[[:space:]]*Clockwork-Pilot/autopilot/\\.github/workflows/[a-z0-9_-]+\\.yml@' \"$f\" || { echo \"$f does not reference a Clockwork-Pilot/autopilot marketplace workflow via uses:\"; exit 1; }; done",
-          "description": "Positive: every workflow file in this repo must contain at least one `uses: Clockwork-Pilot/autopilot/.github/workflows/<name>.yml@<ref>` line. Proves autopilot-selftest is actively consuming the marketplace surface, not just structurally avoiding local paths.",
+        "uses_marketplace_autopilot": {
+          "id": "uses_marketplace_autopilot",
+          "cmd": "for f in $PROJECT_ROOT/.github/workflows/*.yml; do grep -qE 'uses:[[:space:]]*Clockwork-Pilot/autopilot/\\.github/(workflows/[a-z0-9_-]+\\.yml|actions/[a-z0-9_/-]+)@' \"$f\" || { echo \"$f does not reference a Clockwork-Pilot/autopilot marketplace workflow or action via uses:\"; exit 1; }; done",
+          "description": "Positive: every workflow file must reference the Clockwork-Pilot/autopilot marketplace surface \u2014 either a reusable workflow (.github/workflows/<name>.yml@<ref>) or a composite action (.github/actions/<name>@<ref>). Proves active consumption of autopilot while allowing either integration shape.",
           "fails_count": 1
         }
       }

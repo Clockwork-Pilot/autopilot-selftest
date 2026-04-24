@@ -10,7 +10,7 @@ Minimal spec for autopilot-selftest — exists to dogfood check_spec_constraints
 - [Features](#features)
     - [Feature: selftest_shape](#feature-selftest_shape)
       - [no_local_uses_paths](#no_local_uses_paths)
-      - [uses_marketplace_workflow](#uses_marketplace_workflow)
+      - [uses_marketplace_autopilot](#uses_marketplace_autopilot)
 
 ## Features
 
@@ -23,5 +23,5 @@ Minimal spec for autopilot-selftest — exists to dogfood check_spec_constraints
 #### no_local_uses_paths
 **Description:** Negative: no workflow in this repo may reference autopilot via a local `./` path. Only cross-repo `<owner>/autopilot/...@<ref>` is permitted. Enforces the physical boundary between consumer and implementation.
 
-#### uses_marketplace_workflow
-**Description:** Positive: every workflow file in this repo must contain at least one `uses: Clockwork-Pilot/autopilot/.github/workflows/<name>.yml@<ref>` line. Proves autopilot-selftest is actively consuming the marketplace surface, not just structurally avoiding local paths.
+#### uses_marketplace_autopilot
+**Description:** Positive: every workflow file must reference the Clockwork-Pilot/autopilot marketplace surface — either a reusable workflow (.github/workflows/<name>.yml@<ref>) or a composite action (.github/actions/<name>@<ref>). Proves active consumption of autopilot while allowing either integration shape.
