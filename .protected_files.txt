@@ -1,3 +1,9 @@
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/autopilot/spec-checks.k.json
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/autopilot/spec-checks.k.md
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/autopilot/spec.k.json
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/autopilot/spec.k.md
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/spec-checks.k.json
+/home/yaroslav/git/clockwork-pilot/autopilot-selftest/spec-checks.k.md
 /workspace/autopilot/spec-checks.k.json
 /workspace/autopilot/spec-checks.k.md
 /workspace/autopilot/spec.k.json

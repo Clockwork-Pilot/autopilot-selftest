@@ -11,7 +11,8 @@
     "autopilot": {
       "spec_dir": "autopilot",
       "envs": {
-        "PROJECT_ROOT": "autopilot"
+        "PROJECT_ROOT": "autopilot",
+        "CHECKOUT_VER": "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd"
       }
     }
   }
