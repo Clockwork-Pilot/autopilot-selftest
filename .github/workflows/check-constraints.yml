@@ -1,8 +1,9 @@
 name: Check Constraints
 
-# Consumer caller: owns the push / pull_request events and delegates to
-# the library workflow. The library checks out this repo's $GITHUB_WORKSPACE
-# and runs check_spec_constraints.py against this repo's spec.k.json.
+# Consumer caller: invokes the check-constraints composite action directly
+# (bypassing the reusable-workflow shim) so we own the checkout step and can
+# pass `submodules: recursive`. project.k.json declares a spec inside the
+# `autopilot/` submodule, which must be populated for the run to succeed.
 on:
   push:
     branches:
@@ -12,3 +13,7 @@ on:
 jobs:
   check-constraints:
     uses: Clockwork-Pilot/autopilot/.github/workflows/check-constraints.yml@main
+    with:
+      # project.k.json declares a spec at `autopilot/` (the autopilot
+      # submodule), so its spec.k.json must be on disk for the run.
+      submodules: recursive
