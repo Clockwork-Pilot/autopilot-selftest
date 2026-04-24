@@ -1,23 +1,14 @@
 name: Agent
 
-# Consumer caller workflow: demonstrates the shape a real downstream fork
-# ends up with after adopting autopilot from the Marketplace. Consumes
-# coding-agent.yml as a reusable workflow via a cross-repo `uses:` ref —
-# never a local `./` path. The repo boundary is what enforces this: a
-# `./` reference simply cannot resolve across repos, so the separation
-# between implementation (autopilot) and consumer (autopilot-selftest) is
-# mechanical, not conventional.
+# Consumer caller: two-job shape where image preparation is hoisted into
+# its own visible job (ensure-docker-image.yml building Dockerfile.agent-sample)
+# and its output is handed to coding-agent.yml as a pre-built ref. Both
+# reusable workflows' self-hosted jobs share runner_label so the local
+# docker tag is visible across jobs (assumes one runner per label; see
+# autopilot/README.md → Private repositories).
 #
-# Manual trigger only — pick an existing issue number and the runner label
-# (your GitHub username) matching your self-hosted runner. Apply the normal
-# merge_into_upstream/timeout/model frontmatter on the issue as usual; this
-# file just hands off to coding-agent.yml.
-#
-# PR testing loop: when there is a PR open against autopilot, flip the
-# `@main` ref below to `@<pr-branch>` to run this repo's pinned test
-# issues against the in-flight implementation, then flip back to `@main`
-# on merge. This is the same one-line edit a downstream contributor makes
-# to smoke-test a version bump, so the flow is dogfooded by design.
+# PR testing loop: flip the `@main` refs to `@<pr-branch>` to smoke-test
+# against an in-flight autopilot PR, then flip back on merge.
 
 on:
   workflow_dispatch:
@@ -37,10 +28,21 @@ permissions:
   issues: write
 
 jobs:
+  image:
+    uses: Clockwork-Pilot/autopilot/.github/workflows/ensure-docker-image.yml@main
+    with:
+      runner_label:     ${{ inputs.runner_label }}
+      base_image:       ghcr.io/clockwork-pilot/autopilot-ws:latest
+      dockerfile:       Dockerfile.agent-sample
+      tag:              autopilot-agent
+      cache_key_prefix: ${{ github.repository }}-agent-img
+
   run:
+    needs: image
     uses: Clockwork-Pilot/autopilot/.github/workflows/coding-agent.yml@main
     with:
       runner_label: ${{ inputs.runner_label }}
       issue_number: ${{ inputs.issue_number }}
+      docker_image: ${{ needs.image.outputs.docker_image }}
     secrets:
       UPSTREAM_PR_TOKEN: ${{ secrets.UPSTREAM_PR_TOKEN }}

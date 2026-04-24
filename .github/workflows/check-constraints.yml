@@ -1,9 +1,10 @@
 name: Check Constraints
 
-# Consumer caller: invokes the check-constraints composite action directly
-# (bypassing the reusable-workflow shim) so we own the checkout step and can
-# pass `submodules: recursive`. project.k.json declares a spec inside the
-# `autopilot/` submodule, which must be populated for the run to succeed.
+# Consumer caller: exercises both ensure-docker-image (building from
+# Dockerfile.agent-sample) and the check-constraints action against that
+# image. Single workflow — dogfoods the custom-Dockerfile path on every
+# push/PR. project.k.json declares a spec inside the autopilot/ submodule,
+# which must be populated via submodules: recursive.
 on:
   push:
     branches:
@@ -16,7 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          # project.k.json declares a spec at `autopilot/` (the autopilot
-          # submodule), so its spec.k.json must be on disk for the run.
           submodules: recursive
+      - id: image
+        uses: Clockwork-Pilot/autopilot/.github/actions/ensure-docker-image@main
+        with:
+          dockerfile:       Dockerfile.agent-sample
+          base_image:       ghcr.io/clockwork-pilot/autopilot-ws:latest
+          tag:              autopilot-check
+          cache_key_prefix: ${{ github.repository }}-check-img
       - uses: Clockwork-Pilot/autopilot/.github/actions/check-constraints@main
+        with:
+          image: ${{ steps.image.outputs.image }}

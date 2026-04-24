@@ -1,0 +1,15 @@
+# Sample Dockerfile demonstrating the build-agent-image contract:
+# FROM an autopilot-ws-compatible base, install your extra dependencies as
+# root, then return to USER node at runtime.
+#
+# The selftest workflows agent-with-dockerfile.yml and
+# check-constraints-with-dockerfile.yml pass this file to the
+# Clockwork-Pilot/autopilot build-agent-image action.
+
+FROM ghcr.io/clockwork-pilot/autopilot-ws:latest
+
+USER 0
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends jq \
+    && rm -rf /var/lib/apt/lists/*
+USER node
