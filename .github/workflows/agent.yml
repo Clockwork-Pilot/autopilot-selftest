@@ -41,8 +41,9 @@ jobs:
     needs: image
     uses: Clockwork-Pilot/autopilot/.github/workflows/coding-agent.yml@main
     with:
-      runner_label: ${{ inputs.runner_label }}
-      issue_number: ${{ inputs.issue_number }}
-      docker_image: ${{ needs.image.outputs.docker_image }}
+      runner_label:      ${{ inputs.runner_label }}
+      issue_number:      ${{ inputs.issue_number }}
+      docker_image:      ${{ needs.image.outputs.docker_image }}
+      extra_docker_args: -e VERBOSE=1
     secrets:
       UPSTREAM_PR_TOKEN: ${{ secrets.UPSTREAM_PR_TOKEN }}

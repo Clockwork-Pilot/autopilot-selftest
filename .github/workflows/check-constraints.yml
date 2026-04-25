@@ -27,4 +27,5 @@ jobs:
           tag_prefix:       ${{ github.repository }}-check-img
       - uses: Clockwork-Pilot/autopilot/.github/actions/check-constraints@main
         with:
-          image: ${{ steps.image.outputs.image }}
+          image:             ${{ steps.image.outputs.image }}
+          extra_docker_args: -e VERBOSE=1
