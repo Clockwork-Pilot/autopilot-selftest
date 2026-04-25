@@ -15,24 +15,25 @@ Run each mode independently — they cover disjoint code paths in `create-pr`.
 
 ### Upstream selftest repo
 
-- `RUNNERS_PAT` — PAT with `read:org` + `read:user` on the runner-owner account. Used by `issue-trigger.yml` to resolve the self-hosted runner label.
+- `RUNNERS_PAT` — PAT with `read:org` + `read:user` on the runner-owner account. Used by `issue-trigger.yml` to resolve the self-hosted runner label. Store as a **repository secret** (or org secret); `issue-trigger.yml` does not declare `environment:`, so an environment secret would not be reachable.
 
 ### Fork selftest repo (fork→upstream mode only)
 
 - `RUNNERS_PAT` — same as above.
-- `UPSTREAM_PR_TOKEN` — user / fine-grained PAT with `repo` scope on the upstream repo. Required for `create-pr` to open a PR from fork head into upstream base. Cannot be the default workflow token — that one is scoped to the repo it runs in and cannot PR cross-repo.
+- `UPSTREAM_PR_TOKEN` — user / fine-grained PAT with `repo` scope on the upstream repo. Required for `create-pr` to open a PR from fork head into upstream base. Cannot be the default workflow token — that one is scoped to the repo it runs in and cannot PR cross-repo. Store as an **environment secret** on an environment named `upstream-pr`: the `open-upstream-pr` job in upstream `coding-agent.yml` declares `environment: upstream-pr`, so configuring that environment with a required reviewer gates every cross-repo PR creation. A repo/org secret resolves too but skips the gating.
 
-### Gating `RUNNERS_PAT`
+### Gating PATs
 
-The PAT acts as its creator. Anyone with write access to the repo can author a workflow that exfiltrates it, so narrow it:
+Both PATs act as their creator — anyone with write access to the repo can author a workflow that exfiltrates them. Narrow them:
 
 - Use a **fine-grained PAT**, not classic.
-- Resource owner: the specific org/user; repository access: only the repos `issue-trigger.yml` queries.
-- Permissions: Organization *Members* — Read; Account *Profile* — Read. Nothing else.
+- Resource owner: the specific org/user; repository access: only the repos the consuming workflow queries.
+- Per-token permissions:
+  - `RUNNERS_PAT`: Organization *Members* — Read; Account *Profile* — Read. Nothing else.
+  - `UPSTREAM_PR_TOKEN`: `repo` scope (or fine-grained Contents + Pull requests — Read & write) on the upstream repo. Nothing else.
 - Expiration: 30–90 days; rotate on expiry.
-- Store as an **environment secret** on an environment with yourself as a required reviewer — every run that uses it pauses for approval.
 - Repo Settings → Actions → General: require approval for outside-collaborator fork PRs; don't send secrets to fork workflows.
-- Branch-protect any branch workflows run from on push.
+- `UPSTREAM_PR_TOKEN` is gated by the `upstream-pr` environment — configure a required reviewer there so every cross-repo PR creation pauses for approval. `RUNNERS_PAT` cannot be environment-gated (no `environment:` on `issue-trigger.yml`), so branch-protect any branch workflows run from on push.
 
 ### Self-hosted runner
 
