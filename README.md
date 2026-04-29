@@ -2,6 +2,27 @@
 
 Selftest repo for [Clockwork-Pilot/autopilot](https://github.com/Clockwork-Pilot/autopilot). Exercises the reusable workflow end-to-end against a real GitHub repo.
 
+## Using the agent
+
+1. **Set up a self-hosted runner** — Follow [autopilot/ansible/README.md](../autopilot-ws/ansible/README.md) to register a runner on your machine with your GitHub username as the label.
+
+2. **Add required secrets** — See [Required secrets](#required-secrets) below.
+
+3. **Open an issue** describing a feature. Optional YAML frontmatter:
+   ```yaml
+   ---
+   timeout: 20           # Minutes (default 10)
+   model: claude-opus-4-6 # Model (default claude-haiku-4-5)
+   ---
+   <describe feature>
+   ```
+
+4. **Trigger the agent** — Apply the `agent-run` label to the issue.
+
+5. **Check results** — The agent opens a PR and posts a constraints report as an issue comment.
+
+The workflow uses [`Dockerfile.agent-sample`](./Dockerfile.agent-sample) to customize the Docker image with extra dependencies. See [autopilot/README.md](./autopilot/README.md#installing-extra-dependencies) for how to create your own.
+
 ## Test modes
 
 | Mode | Repo setup | Covers |

@@ -34,8 +34,7 @@ jobs:
       runner_label:     ${{ inputs.runner_label }}
       base_image:       ghcr.io/clockwork-pilot/autopilot-ws:latest
       dockerfile:       Dockerfile.agent-sample
-      tag:              autopilot-agent
-      tag_prefix:       ${{ github.repository }}-agent-img
+      tag_prefix:       autopilot-agent
 
   run:
     needs: image
